@@ -1,6 +1,8 @@
 
+using AutoMapper;
 using ECCMS.Api.Dtos;
 using ECCMS.Api.Extentions;
+using ECCMS.Api.Helpers;
 using ECCMS.Api.Middleware;
 using ECCMS.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,6 +19,9 @@ namespace ECCMS.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var mappingConfig = new MapperConfiguration(mc => { mc.AddProfile(new MapperProfile()); });
+            var mapper = mappingConfig.CreateMapper();
+            builder.Services.AddSingleton(mapper);
 
             // Add services to the container.
             builder.Services.AddApplicationServices();

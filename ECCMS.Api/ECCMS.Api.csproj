@@ -23,6 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Controllers\Institution\" />
+    <Folder Include="Controllers\Role\" />
+    <Folder Include="Controllers\Province\" />
     <Folder Include="Dtos\Base\" />
   </ItemGroup>
 
