@@ -1,5 +1,6 @@
 
 using ECCMS.Api.Dtos;
+using ECCMS.Api.Extentions;
 using ECCMS.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,7 @@ namespace ECCMS.Api
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddApplicationServices();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -24,7 +26,7 @@ namespace ECCMS.Api
 
             builder.Services.AddSwaggerGen(option =>
             {
-                option.SwaggerDoc("v1", new OpenApiInfo { Title = "SaaS Portal", Version = "v1" });
+                option.SwaggerDoc("v1", new OpenApiInfo { Title = "ECCMS Portal", Version = "v1" });
                 option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
@@ -70,6 +72,16 @@ namespace ECCMS.Api
                     ValidAudience = builder.Configuration["Jwt:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"] ?? string.Empty))
                 };
+            });
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyHeader()
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod();
+                });
             });
 
             var app = builder.Build();
