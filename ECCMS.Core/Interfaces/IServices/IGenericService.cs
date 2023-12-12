@@ -1,15 +1,12 @@
 ﻿using ECCMS.Core.Entities.Base;
 
-namespace ECCMS.Core.Interfaces.IRepositories
+namespace ECCMS.Core.Interfaces.IServices
 {
-    public interface IGenericRepository<T> where T : BaseEntity
+    public interface IGenericService<T> where T : BaseEntity
     {
         Task<IReadOnlyList<T>> GetAllAsync();
-
         Task<T?> GetByIdAsync(int id);
-
         Task AddAsync(T entity);
-
         Task UpdateAsync(T entity);
     }
 }

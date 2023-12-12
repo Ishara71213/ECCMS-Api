@@ -1,5 +1,7 @@
 ﻿using ECCMS.Core.Entities.Base;
 using ECCMS.Core.Interfaces.IRepositories;
+using ECCMS.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,24 +12,42 @@ namespace ECCMS.Infrastructure.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {
-        public Task AddAsync(T entity)
+        private readonly EccmsDbContext _context;
+
+        public GenericRepository(EccmsDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public Task<IReadOnlyList<T>> GetAllAsync()
+        async Task IGenericRepository<T>.AddAsync(T entity)
         {
-            throw new NotImplementedException();
+            _context.Add(entity);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<T> GetByIdAsync(int id)
+        async Task<IReadOnlyList<T>> IGenericRepository<T>.GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Set<T>().Where(x => !x.IsDeleted).OrderByDescending(x => x.Id).ToListAsync();
         }
 
-        public Task UpdateAsync(T entity)
+         async Task<T?> IGenericRepository<T>.GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Set<T>().Where(x => x.Id == id).FirstOrDefaultAsync();
+        }
+
+        async Task IGenericRepository<T>.UpdateAsync(T entity)
+        {
+            var exists = _context.Set<T>().Any(t => t.Id == entity.Id);
+            if (!exists)
+                throw new Exception("Not Found");
+
+            _context.Update(entity);
+            if (entity.Id > 0)
+            {
+                _context.Entry(entity).Property(x => x.CreatedBy).IsModified = false;
+                _context.Entry(entity).Property(x => x.CreatedOn).IsModified = false;
+            }
+            await _context.SaveChangesAsync();
         }
     }
 }
