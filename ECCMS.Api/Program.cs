@@ -1,6 +1,7 @@
 
 using ECCMS.Api.Dtos;
 using ECCMS.Api.Extentions;
+using ECCMS.Api.Middleware;
 using ECCMS.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -135,6 +136,8 @@ namespace ECCMS.Api
             });
 
             app.UseCors("AllowAll");
+
+            app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseHttpsRedirection();
 

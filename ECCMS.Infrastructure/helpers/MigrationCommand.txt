@@ -1,0 +1,5 @@
+﻿Add-migration Initial -o Migrations
+
+Remove-Migration
+
+Update-database

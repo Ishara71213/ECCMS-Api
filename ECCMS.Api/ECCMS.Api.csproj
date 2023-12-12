@@ -24,7 +24,6 @@
 
   <ItemGroup>
     <Folder Include="Dtos\Base\" />
-    <Folder Include="Errors\" />
   </ItemGroup>
 
 </Project>

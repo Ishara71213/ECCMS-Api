@@ -16,7 +16,7 @@ namespace ECCMS.Infrastructure.Data
 
         public virtual DbSet<City> Cities { get; set; }
         public  DbSet<Role> Roles { get; set; }
-        public virtual DbSet<Province> provinces { get; set; }
+        public virtual DbSet<Province> Provinces { get; set; }
         public virtual DbSet<Institution> Institutions { get; set; }
     }
 }
