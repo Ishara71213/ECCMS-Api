@@ -23,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Dtos\Base\" />
     <Folder Include="Errors\" />
-    <Folder Include="Helpers\" />
   </ItemGroup>
 
 </Project>
