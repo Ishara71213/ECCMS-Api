@@ -6,9 +6,7 @@ using ECCMS.Api.Dtos;
 
 namespace ECCMS.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CityController : ControllerBase
+    public class CityController : CommonController<CityController>
     {
         private readonly IMapper _mapper;
         private readonly ICityService _cityService;

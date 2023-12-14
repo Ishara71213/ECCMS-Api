@@ -8,6 +8,7 @@ namespace ECCMS.Api.Helpers
     {
         public MapperProfile() 
         {
+            CreateMap<UserDto, User>().ReverseMap();
             CreateMap<CityDto, City>().ReverseMap();
         }
        

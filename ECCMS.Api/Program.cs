@@ -4,8 +4,10 @@ using ECCMS.Api.Dtos;
 using ECCMS.Api.Extentions;
 using ECCMS.Api.Helpers;
 using ECCMS.Api.Middleware;
+using ECCMS.Core.Entities;
 using ECCMS.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -19,6 +21,7 @@ namespace ECCMS.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddDbContext<EccmsDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             var mappingConfig = new MapperConfiguration(mc => { mc.AddProfile(new MapperProfile()); });
             var mapper = mappingConfig.CreateMapper();
             builder.Services.AddSingleton(mapper);
@@ -58,7 +61,7 @@ namespace ECCMS.Api
                 });
             });
 
-            builder.Services.AddDbContext<EccmsDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            
 
             builder.Services.AddAuthentication(options =>
             {
@@ -79,6 +82,9 @@ namespace ECCMS.Api
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"] ?? string.Empty))
                 };
             });
+
+            builder.Services.AddAuthorization();
+            builder.Services.AddIdentity<User, Role>().AddEntityFrameworkStores<EccmsDbContext>().AddDefaultTokenProviders();
 
             builder.Services.AddCors(options =>
             {

@@ -1,6 +1,6 @@
 ﻿namespace ECCMS.Api.Dtos;
 
-public class RolePostDto
+public class RoleDto
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
