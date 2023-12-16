@@ -15,12 +15,14 @@ public class UserService : IUserService
     private readonly Random _random;
     private readonly IConfiguration _configuration;
     private readonly IUserRepository _userRepository;
-    public UserService(UserManager<User> userManager, IUserRepository userRepository, Random random, IConfiguration configuration)
+    private readonly IRoleRepository _roleRepository;
+    public UserService(UserManager<User> userManager, IUserRepository userRepository, IRoleRepository roleRepository, Random random, IConfiguration configuration)
     {
         _userManager = userManager;
         _random = random;
         _configuration = configuration;
         _userRepository = userRepository;
+        _roleRepository = roleRepository;
     }
 
     public async Task<IReadOnlyList<User>> GetUserList(UserType type)
@@ -41,7 +43,7 @@ public class UserService : IUserService
     private string GetRandomPassword(int length)
     {
         const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        return string.Concat("eccms@") + new string(Enumerable.Repeat(chars, length)
+        return string.Concat("Eccms123@") + new string(Enumerable.Repeat(chars, length)
             .Select(s => s[_random.Next(s.Length)]).ToArray());
     }
 
@@ -78,15 +80,22 @@ public class UserService : IUserService
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
         try
         {
+            Role? role = await _roleRepository.GetByIdAsync(roleId) ?? throw new Exception("Invalid Role Id");
+
+            user.UserName = user.Email;
+            user.UserName = user.Email;
             var result = await _userManager.CreateAsync(user, password);
+            
             if (!result.Succeeded)
                 throw new Exception("Failed to create user");
             
+            await _userManager.AddToRoleAsync(user, role.NormalizedName!);
+
             scope.Complete();
         }
         catch (Exception ex)
         {
-            throw new Exception("Add User: " + ex.Message);
+             throw new Exception("Add User: " + ex.Message);
         }
         createUserResponse.Password = password;
         createUserResponse.User = user;

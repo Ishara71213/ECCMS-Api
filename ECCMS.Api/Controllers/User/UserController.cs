@@ -5,6 +5,9 @@ using ECCMS.Api.Dtos;
 using ECCMS.Core.Entities;
 using AutoMapper;
 using ECCMS.Core.Interfaces.IServices;
+using Microsoft.AspNetCore.Identity;
+using ECCMS.Core.Interfaces.IRepositories;
+using ECCMS.Infrastructure.Repositories;
 
 namespace ECCMS.Api.Controllers
 {
@@ -13,10 +16,14 @@ namespace ECCMS.Api.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IUserService _userService;
-        public UserController(IUserService userService, IMapper mapper)
+        private readonly UserManager<User> _userManager;
+        private readonly IRoleRepository _roleRepository;
+        public UserController(UserManager<User> userManager,IUserService userService, IMapper mapper, IRoleRepository roleRepository)
         {
             _mapper = mapper;
             _userService = userService;
+            _roleRepository = roleRepository;
+            _userManager = userManager;
         }
 
         [AllowAnonymous]
@@ -33,11 +40,18 @@ namespace ECCMS.Api.Controllers
         public async Task<IActionResult> GetById(int id)
         {
             var item = await _userService.GetByIdAsync(id);
-            //return _mapper.Map<IReadOnlyList<ProductDto>>(items);
-            return Ok(item);
+            var roles = await _userManager.GetRolesAsync(item);
+            var user = _mapper.Map<UserDto>(item);
+            if (roles != null)
+            {
+                var role = await _roleRepository.GetByNameAsync(roles[0]);
+                user.RoleId = role.Id;
+            }
+            
+            return Ok(user);
         }
 
-        [HttpGet("type:int")]
+        [HttpGet("Type/{type:int}")]
         public async Task<IReadOnlyList<UserDto>> GetUsersByType(UserType type)
         {
             var users = await _userService.GetUserList(type);

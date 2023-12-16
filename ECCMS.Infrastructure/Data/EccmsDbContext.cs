@@ -22,5 +22,9 @@ namespace ECCMS.Infrastructure.Data
 
         public virtual DbSet<Institution> Institutions { get; set; }
 
+        public virtual DbSet<Branch> Branches { get; set; }
+
+        public virtual DbSet<Employee> Employees { get; set; }
+
     }
 }

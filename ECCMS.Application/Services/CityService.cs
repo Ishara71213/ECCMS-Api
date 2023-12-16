@@ -12,9 +12,9 @@ namespace ECCMS.Application.Services
         { 
             _cityRepository = cityRepository;
         }
-        public Task AddAsync(City entity)
+        public async Task AddAsync(City entity)
         {
-            throw new NotImplementedException();
+             await _cityRepository.AddAsync(entity);
         }
 
         public async Task<IReadOnlyList<City>> GetAllAsync()
@@ -22,14 +22,14 @@ namespace ECCMS.Application.Services
             return await _cityRepository.GetAllAsync();
         }
 
-        public Task<City?> GetByIdAsync(int id)
+        public async Task<City?> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+           return await _cityRepository.GetByIdAsync(id);
         }
 
-        public Task UpdateAsync(City entity)
+        public async Task UpdateAsync(City entity)
         {
-            throw new NotImplementedException();
+            await _cityRepository.UpdateAsync(entity);
         }
     }
 }

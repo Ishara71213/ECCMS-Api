@@ -6,7 +6,7 @@ namespace ECCMS.Core.Entities
     {
 
         public string Name { get; set; } = string.Empty;
-        public int ProvicnceId { get; set; }
+        public int ProvinceId { get; set; }
         public virtual Province? Province { get; set; } 
     }
 }

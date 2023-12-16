@@ -126,16 +126,18 @@ namespace ECCMS.Api
 
                         var jwtToken = (JwtSecurityToken)validatedToken;
                         var userId = jwtToken.Claims.First(x => x.Type == "UserId").Value;
+                        var employeeId = jwtToken.Claims.First(x => x.Type == "EmployeeId").Value;
                         var roleId = jwtToken.Claims.First(x => x.Type == "RoleId").Value;
-                        var companyId = jwtToken.Claims.First(x => x.Type == "CompanyId").Value;
-                        var departmentId = jwtToken.Claims.First(x => x.Type == "DepartmentId").Value;
+                        var instutionId = jwtToken.Claims.First(x => x.Type == "InstutionId").Value;
+                        var branchId = jwtToken.Claims.First(x => x.Type == "BranchId").Value;
 
                         AccessDto access = new()
                         {
                             UserId = int.Parse(userId),
+                            EmployeeId = int.Parse(employeeId),
                             RoleId = int.Parse(roleId),
-                            CompanyId = int.Parse(companyId),
-                            DepartmentId = int.Parse(departmentId)
+                            InstutionId = int.Parse(instutionId),
+                            BranchId = int.Parse(branchId)
                         };
                         context.Items["Access"] = access;
                     }

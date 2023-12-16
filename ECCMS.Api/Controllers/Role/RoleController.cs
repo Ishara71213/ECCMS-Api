@@ -2,6 +2,7 @@
 using ECCMS.Api.Dtos;
 using ECCMS.Core.Entities;
 using ECCMS.Core.Interfaces.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECCMS.Api.Controllers
@@ -23,14 +24,15 @@ namespace ECCMS.Api.Controllers
             var roleDtos = _mapper.Map<List<RoleDto>>(roles);
             return roleDtos;
         }
-
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Add(RolePostDto model)
         {
             var access = HttpContext.Items["Access"] as AccessDto;
             var item = _mapper.Map<Role>(model);
-            item.CreatedBy = access!.UserId;
-            item.InstitutionId = access!.CompanyId;
+            item.NormalizedName = item!.Name!.ToUpper();
+            //item.CreatedBy = access!.UserId;
+            //item.InstitutionId = access!.CompanyId;
             await _roleService.AddAsync(item);
 
             return CreatedAtAction("GetAll", new { id = item.Id }, _mapper.Map<RoleDto>(item));
