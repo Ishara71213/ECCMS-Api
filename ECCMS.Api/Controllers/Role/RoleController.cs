@@ -24,6 +24,16 @@ namespace ECCMS.Api.Controllers
             var roleDtos = _mapper.Map<List<RoleDto>>(roles);
             return roleDtos;
         }
+
+        [HttpGet("GetAllByInstitution/{id:int}")]
+        public async Task<IReadOnlyList<RoleDto>> GetAllByInstitutionId(int id)
+        {
+            var roles = await _roleService.GetAllAsync();
+            var filteredRoles=roles.Where(item=>item.InstitutionId==id).ToList();
+            var roleDtos = _mapper.Map<List<RoleDto>>(filteredRoles);
+            return roleDtos;
+        }
+
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Add(RolePostDto model)
@@ -31,8 +41,8 @@ namespace ECCMS.Api.Controllers
             var access = HttpContext.Items["Access"] as AccessDto;
             var item = _mapper.Map<Role>(model);
             item.NormalizedName = item!.Name!.ToUpper();
-            //item.CreatedBy = access!.UserId;
-            //item.InstitutionId = access!.CompanyId;
+            item.CreatedBy = access!.UserId;
+            item.InstitutionId = access!.InstutionId;
             await _roleService.AddAsync(item);
 
             return CreatedAtAction("GetAll", new { id = item.Id }, _mapper.Map<RoleDto>(item));

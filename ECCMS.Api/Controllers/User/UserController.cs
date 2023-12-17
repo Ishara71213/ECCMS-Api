@@ -8,6 +8,7 @@ using ECCMS.Core.Interfaces.IServices;
 using Microsoft.AspNetCore.Identity;
 using ECCMS.Core.Interfaces.IRepositories;
 using ECCMS.Infrastructure.Repositories;
+using ECCMS.Application.Services;
 
 namespace ECCMS.Api.Controllers
 {
@@ -31,9 +32,42 @@ namespace ECCMS.Api.Controllers
         public async Task<IActionResult> Post(UserDto userDto)
         {
             var user = _mapper.Map<User>(userDto);
-            var userResponse = await _userService.AddUser(user, userDto.RoleId);
+            var userResponse = await _userService.AddUser(user, userDto.RoleId, "");
 
             return Ok(new { userDto.Email, userResponse.Password });
+        }
+
+        [AllowAnonymous]
+        [HttpPost("Register")]
+        public async Task<IActionResult> Register(UserRegisterPostDto model)
+        {
+            string message = await ValidateUser(0, 0, model.MobileNo, model.Email);
+            if (!string.IsNullOrEmpty(message))
+            {
+                return BadRequest(message);
+            }
+
+            #region User
+           
+
+            User user = new User();
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.UserName = model.Email;
+            user.Nic = model.Nic;
+            user.Address = model.Address;
+            user.MobileNo = model.MobileNo;
+            user.Email = model.Email;
+            user.Gender = model.Gender;
+            user.Dob = model.Dob;
+            user.Status = model.Status;
+            user.Type = UserType.User;
+            user.CreatedBy = user.Id;
+            
+            await _userService.AddUser(user, model.RoleId, model.Password);
+            #endregion Member
+
+            return Ok("User Created Successfully");
         }
 
         [HttpGet("{id:int}")]
@@ -63,6 +97,21 @@ namespace ECCMS.Api.Controllers
         {
             await _userService.RemoveUser(id);
             return Ok();
+        }
+
+        private async Task<string> ValidateUser(int memberId, int userId, string mobileNo, string email)
+        {
+            if (await _userService.IsMobileNoExists(UserType.User, userId, mobileNo))
+            {
+                return $"MobileNo '{mobileNo}' Already Exist";
+            }
+
+            if (await _userService.IsEmailExists(UserType.User, userId, email))
+            {
+                return $"Email '{email}' Already Exist";
+            }
+
+            return "";
         }
     }
 }

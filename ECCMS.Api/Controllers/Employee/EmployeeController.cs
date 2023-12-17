@@ -73,7 +73,7 @@ namespace ECCMS.Api.Controllers
             user.Type = UserType.Employee;
             //user.CreatedBy = access!.UserId;
 
-            var userResult = await _userService.AddUser(user, model.RoleId);
+            var userResult = await _userService.AddUser(user, model.RoleId,"");
             if (userResult != null)
             {
                 var employee = _mapper.Map<Employee>(model);

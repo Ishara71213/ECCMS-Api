@@ -72,10 +72,10 @@ public class UserService : IUserService
         return await _userRepository.IsUsernameNoExists(userId, val);
     }
 
-    public async Task<CreateUserResponse> AddUser(User user, int roleId)
+    public async Task<CreateUserResponse> AddUser(User user, int roleId, string defaultPw="")
     {
         var createUserResponse = new CreateUserResponse();
-        var password = GetRandomPassword(int.Parse(_configuration["PasswordLength"] ?? "0"));
+        var password = defaultPw!="" ? defaultPw : GetRandomPassword(int.Parse(_configuration["PasswordLength"] ?? "0"));
 
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
         try
@@ -87,7 +87,7 @@ public class UserService : IUserService
             var result = await _userManager.CreateAsync(user, password);
             
             if (!result.Succeeded)
-                throw new Exception("Failed to create user");
+                throw new Exception(result.Errors.FirstOrDefault()?.Description ?? "Failed to create user");
             
             await _userManager.AddToRoleAsync(user, role.NormalizedName!);
 

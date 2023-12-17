@@ -13,6 +13,7 @@ using System.Reflection.Emit;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
+using ECCMS.Core.Enums;
 
 namespace ECCMS.Api.Controllers.Auth
 {
@@ -46,50 +47,94 @@ namespace ECCMS.Api.Controllers.Auth
             var result = await _signInManager.PasswordSignInAsync(user, loginDto.Password, false, false);
             if (!result.Succeeded) return Unauthorized();
 
-            var employee = await _employeeService.GetByUserIdAsync(user.Id);
-            if (employee == null) return NotFound("Employee Not Found");
+            if (user.Type == UserType.Employee)
+            {
+                var employee = await _employeeService.GetByUserIdAsync(user.Id);
+                if (employee == null) return NotFound("Employee Not Found");
 
-            var role = await _roleService.GetByIdAsync(employee.RoleId);
-            if (role == null) return NotFound("Roles Not Found");
+                var role = await _roleService.GetByIdAsync(employee.RoleId);
+                if (role == null) return NotFound("Roles Not Found");
 
+
+
+
+                List<Claim> claims = new List<Claim>();
+                claims = new List<Claim>
+                 {
+                    new(ClaimTypes.Name, user.UserName!),
+                    new(ClaimTypes.Email, user.Email!),
+                    new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new(ClaimTypes.Role, role.Name!),
+                    new Claim(type: "UserId", value: user!.Id.ToString()),
+                    new Claim(type: "EmployeeId", value: user!.Id.ToString()),
+                    new Claim(type: "InstutionId", value: role.InstitutionId.ToString()),
+                    new Claim(type: "BranchId", value: employee!.BranchId.ToString()),
+                    new Claim(type: "RoleId", value: employee!.RoleId.ToString()),
+                    new Claim(type: ClaimTypes.GivenName, value: user.FirstName),
+                    new Claim(type: ClaimTypes.Surname, value: user.LastName),
+                };
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"] ?? string.Empty));
+                var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                var token = new JwtSecurityToken
+                (
+                    _configuration["Jwt:Issuer"],
+                    _configuration["Jwt:Audience"],
+                    claims,
+                    expires: DateTime.Now.AddHours(int.Parse(_configuration["Jwt:DurationInHours"]!)),
+                    signingCredentials: credentials
+                );
+
+
+                var response = new
+                {
+                    token = new JwtSecurityTokenHandler().WriteToken(token),
+                    role = role,
+                    firstName = user.FirstName,  // Include first name in the response
+                    lastName = user.LastName,    // Include last name in the response
+                };
+                return Ok(response);
+            }
+            else
+            {
+               
+                var role = await _roleService.GetByNameAsync("GUEST");
+                if (role == null) return NotFound("Roles Not Found");
+
+                List<Claim> claims = new List<Claim>();
+                claims = new List<Claim>
+                {
+                    new(ClaimTypes.Name, user.UserName!),
+                    new(ClaimTypes.Email, user.Email!),
+                    new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new(ClaimTypes.Role, role.Name!),
+                    new Claim(type: "UserId", value: user!.Id.ToString()),
+                    new Claim(type: "RoleId", value: role!.Id.ToString()),
+                    new Claim(type: ClaimTypes.GivenName, value: user.FirstName),
+                    new Claim(type: ClaimTypes.Surname, value: user.LastName),
+                };
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"] ?? string.Empty));
+                var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                var token = new JwtSecurityToken
+                (
+                    _configuration["Jwt:Issuer"],
+                    _configuration["Jwt:Audience"],
+                    claims,
+                    expires: DateTime.Now.AddHours(int.Parse(_configuration["Jwt:DurationInHours"]!)),
+                    signingCredentials: credentials
+                );
+
+
+                var response = new
+                {
+                    token = new JwtSecurityTokenHandler().WriteToken(token),
+                    role = role,
+                    firstName = user.FirstName,  // Include first name in the response
+                    lastName = user.LastName,    // Include last name in the response
+                };
+                return Ok(response);
+            }
 
             
-
-            List<Claim> claims = new List<Claim>();
-            claims = new List<Claim>
-        {
-                new(ClaimTypes.Name, user.UserName!),
-                new(ClaimTypes.Email, user.Email!),
-                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new(ClaimTypes.Role, role.Name!),
-                new Claim(type: "UserId", value: user!.Id.ToString()),
-                new Claim(type: "EmployeeId", value: user!.Id.ToString()),
-                new Claim(type: "InstutionId", value: role.InstitutionId.ToString()),
-                new Claim(type: "BranchId", value: employee!.BranchId.ToString()),
-                new Claim(type: "RoleId", value: employee!.RoleId.ToString()),
-                new Claim(type: ClaimTypes.GivenName, value: user.FirstName),
-                new Claim(type: ClaimTypes.Surname, value: user.LastName),
-        };
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"] ?? string.Empty));
-            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var token = new JwtSecurityToken
-            (
-                _configuration["Jwt:Issuer"],
-                _configuration["Jwt:Audience"],
-                claims,
-                expires: DateTime.Now.AddHours(int.Parse(_configuration["Jwt:DurationInHours"]!)),
-                signingCredentials: credentials
-            );
-
-
-            var response = new
-            {
-                token = new JwtSecurityTokenHandler().WriteToken(token),
-                role = role,
-                firstName = user.FirstName,  // Include first name in the response
-                lastName = user.LastName,    // Include last name in the response
-            };
-            return Ok(response);
         }
     }
 }

@@ -19,7 +19,7 @@ namespace ECCMS.Core.Interfaces.IServices
 
         public Task<bool> IsUsernameNoExists(int userId, string val);
 
-        Task<CreateUserResponse> AddUser(User user, int roleId);
+        Task<CreateUserResponse> AddUser(User user, int roleId, string defaultPw);
 
         public Task UpdateAsync(User entity);
 
