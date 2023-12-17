@@ -136,5 +136,45 @@ namespace ECCMS.Api.Controllers.Auth
 
             
         }
+
+        [HttpDelete]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return Ok();
+        }
+
+        [HttpPost("ChangePassword")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordPostDTO model)
+        {
+            var access = HttpContext.Items["Access"] as AccessDto;
+            var user = await _userService.GetByIdAsync(access!.UserId);
+            var result = await _signInManager.PasswordSignInAsync(user, model.CurrentPassword, false, false);
+            if (!result.Succeeded)
+            {
+                return BadRequest("CurrentPassword Is Incorrect");
+            }
+
+            user.ModifiedBy = access!.UserId;
+            user.ModifiedOn = DateTime.UtcNow;
+            bool isSuccess = await _userService.UpdatePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            if (isSuccess)
+            {
+                // Is Change Password On Login, we need to reset it
+                var emaployee = await _employeeService.GetByUserIdAsync(access!.UserId);
+                if (emaployee != null && emaployee.ChangePassword!.Value)
+                {
+                    emaployee.ChangePassword = true;
+                    emaployee.ModifiedBy = access!.UserId;
+                    emaployee.ModifiedOn = DateTime.UtcNow;
+                    await _employeeService.UpdateAsync(emaployee);
+                }
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("Change Password Failed");
+            }
+        }
     }
 }
