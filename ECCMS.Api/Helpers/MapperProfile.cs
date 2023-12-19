@@ -58,6 +58,10 @@ namespace ECCMS.Api.Helpers
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
             .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type))
             .ForMember(dest => dest.Dob, opt => opt.MapFrom(src => src.Dob));
+
+            CreateMap<BranchDto, Branch>();
+
+            CreateMap<Branch, BranchDto>();
         }
 
        
