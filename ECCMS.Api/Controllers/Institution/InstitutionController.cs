@@ -27,7 +27,7 @@ namespace ECCMS.Api.Controllers
             return Ok(_mapper.Map<IReadOnlyList<InstitutionDto>>(items));
         }
 
-        [HttpGet("GetById/{id:int}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById(int id)
         {
             var item = await _institutionService.GetByIdAsync(id);
