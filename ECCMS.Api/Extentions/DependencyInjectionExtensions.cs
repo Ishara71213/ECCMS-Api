@@ -29,6 +29,13 @@ namespace ECCMS.Api.Extentions
             services.AddScoped<IBranchRepository, BranchRepository>();
             services.AddScoped<IBranchService, BranchService>();
 
+            services.AddScoped<ICrimeTypeRepository, CrimeTypeRepository>();
+            services.AddScoped<ICrimeTypeService, CrimeTypeService>();
+
+            services.AddScoped<IInquiryRepository, InquiryRepository>();
+            services.AddScoped<IInquiryService, InquiryService>();
+
+
             return services;
         }
     }

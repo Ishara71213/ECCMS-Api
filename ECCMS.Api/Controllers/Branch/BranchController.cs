@@ -1,10 +1,7 @@
 ﻿using AutoMapper;
 using ECCMS.Api.Dtos;
-using ECCMS.Application.Services;
 using ECCMS.Core.Entities;
 using ECCMS.Core.Interfaces.IServices;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECCMS.Api.Controllers

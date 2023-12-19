@@ -21,5 +21,9 @@ namespace ECCMS.Infrastructure.Data
 
         public virtual DbSet<Employee> Employees { get; set; }
 
+        public virtual DbSet<CrimeType> CrimeTypes { get; set; }
+
+        public virtual DbSet<Inquiry> Inquiries { get; set; }
+
     }
 }
