@@ -38,6 +38,8 @@ namespace ECCMS.Api.Extentions
             services.AddScoped<IInstitutionRepository, InstitutionRepository>();
             services.AddScoped<IInstitutionService, InstitutionService>();
 
+            services.AddScoped<IProvinceRepository, ProvinceRepository>();
+            services.AddScoped<IProvinceService, ProvinceService>();
 
             return services;
         }
