@@ -68,6 +68,8 @@ namespace ECCMS.Api.Helpers
 
             CreateMap<InquiryPostDto, Inquiry>().ReverseMap();
             CreateMap<InquiryDto, Inquiry>().ReverseMap();
+
+            CreateMap<ProvinceDto, Province>().ReverseMap();
         }
 
        
