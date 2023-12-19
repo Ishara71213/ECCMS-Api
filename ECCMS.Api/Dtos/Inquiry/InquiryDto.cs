@@ -11,6 +11,8 @@ namespace ECCMS.Api.Dtos
 
         public int EmployeeId { get; set; }
 
+        public int BranchId { get; set; }
+
         public int InstitutionId { get; set; }
 
         public int CrimeTypeId { get; set; }
