@@ -34,6 +34,33 @@ namespace ECCMS.Api.Controllers
             return inquiryDtos;
         }
 
+        [HttpGet("GetAllByUser/{id:int}")]
+        public async Task<IReadOnlyList<InquiryDto>> GetAllByUserId(int userId)
+        {
+            var inquiries = await _inquiryService.GetAllAsync();
+            var filteredList = inquiries.Where(item => item.UserId == userId).ToList();
+            var inquiryDtos = _mapper.Map<List<InquiryDto>>(filteredList);
+            return inquiryDtos;
+        }
+
+        [HttpGet("GetAllByEmployee/{id:int}")]
+        public async Task<IReadOnlyList<InquiryDto>> GetAllByEmployeeId(int empId)
+        {
+            var inquiries = await _inquiryService.GetAllAsync();
+            var filteredList = inquiries.Where(item => item.EmployeeId == empId).ToList();
+            var inquiryDtos = _mapper.Map<List<InquiryDto>>(filteredList);
+            return inquiryDtos;
+        }
+
+        [HttpGet("GetAllByBranch/{id:int}")]
+        public async Task<IReadOnlyList<InquiryDto>> GetAllByBranchId(int Id)
+        {
+            var inquiries = await _inquiryService.GetAllAsync();
+            var filteredList = inquiries.Where(item => item.UserId == Id).ToList();
+            var inquiryDtos = _mapper.Map<List<InquiryDto>>(filteredList);
+            return inquiryDtos;
+        }
+
         [HttpPost]
         public async Task<IActionResult> Add(InquiryPostDto model)
         {
