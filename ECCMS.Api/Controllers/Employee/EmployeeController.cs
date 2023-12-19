@@ -12,8 +12,7 @@ using System.Net;
 
 namespace ECCMS.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    
     public class EmployeeController : CommonController<CityController>
     {
         private readonly IMapper _mapper;

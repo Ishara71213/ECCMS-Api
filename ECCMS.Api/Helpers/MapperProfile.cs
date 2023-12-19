@@ -8,6 +8,7 @@ namespace ECCMS.Api.Helpers
     {
         public MapperProfile() 
         {
+            CreateMap<InstitutionDto, Institution>().ReverseMap();
             CreateMap<UserDto, User>().ReverseMap();
             CreateMap<RolePostDto, Role>().ReverseMap();
             CreateMap<RoleDto, Role>().ReverseMap();

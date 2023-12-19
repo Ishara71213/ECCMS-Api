@@ -1,10 +1,9 @@
-﻿using ECCMS.Core.Entities;
-
-namespace ECCMS.Api.Dtos
+﻿namespace ECCMS.Api.Dtos
 {
-    public class BranchDto
+    public class InstitutionDto
     {
         public int Id { get; set; }
+
         public string Name { get; set; } = null!;
 
         public string? Address { get; set; }
@@ -12,9 +11,5 @@ namespace ECCMS.Api.Dtos
         public string? PhoneNumber { get; set; }
 
         public string? EmailAddress { get; set; }
-
-        public int CityId { get; set; }
-        public int InstitutionId { get; set; }
-
     }
 }

@@ -6,8 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ECCMS.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+   
     public class InquiryController : CommonController<InquiryController>
     {
         private readonly IMapper _mapper;

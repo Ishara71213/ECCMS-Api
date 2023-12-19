@@ -7,8 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ECCMS.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    
     public class CrimeTypeController : CommonController<CrimeTypeController>
     {
         private readonly IMapper _mapper;

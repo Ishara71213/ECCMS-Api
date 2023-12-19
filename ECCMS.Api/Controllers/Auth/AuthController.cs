@@ -17,8 +17,7 @@ using ECCMS.Core.Enums;
 
 namespace ECCMS.Api.Controllers.Auth
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    
     public class AuthController : CommonController<CityController>
     {
         private readonly SignInManager<User> _signInManager;

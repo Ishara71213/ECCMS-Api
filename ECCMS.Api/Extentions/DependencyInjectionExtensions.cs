@@ -34,6 +34,9 @@ namespace ECCMS.Api.Extentions
 
             services.AddScoped<IInquiryRepository, InquiryRepository>();
             services.AddScoped<IInquiryService, InquiryService>();
+            
+            services.AddScoped<IInstitutionRepository, InstitutionRepository>();
+            services.AddScoped<IInstitutionService, InstitutionService>();
 
 
             return services;
