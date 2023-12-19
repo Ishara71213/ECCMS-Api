@@ -4,6 +4,7 @@ using ECCMS.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECCMS.Infrastructure.Migrations
 {
     [DbContext(typeof(EccmsDbContext))]
-    partial class EccmsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231218161146_BranchTable2")]
+    partial class BranchTable2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -136,9 +139,6 @@ namespace ECCMS.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("BranchId")
-                        .HasColumnType("int");
-
                     b.Property<bool?>("ChangePassword")
                         .HasColumnType("bit");
 
@@ -177,8 +177,6 @@ namespace ECCMS.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BranchId");
 
                     b.HasIndex("RoleId");
 
@@ -599,10 +597,6 @@ namespace ECCMS.Infrastructure.Migrations
 
             modelBuilder.Entity("ECCMS.Core.Entities.Employee", b =>
                 {
-                    b.HasOne("ECCMS.Core.Entities.Branch", "Branch")
-                        .WithMany()
-                        .HasForeignKey("BranchId");
-
                     b.HasOne("ECCMS.Core.Entities.Role", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId")
@@ -614,8 +608,6 @@ namespace ECCMS.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Branch");
 
                     b.Navigation("Role");
 

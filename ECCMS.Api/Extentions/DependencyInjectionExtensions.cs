@@ -26,6 +26,9 @@ namespace ECCMS.Api.Extentions
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IEmployeeService, EmployeeService>();
 
+            services.AddScoped<IBranchRepository, BranchRepository>();
+            services.AddScoped<IBranchService, BranchService>();
+
             return services;
         }
     }

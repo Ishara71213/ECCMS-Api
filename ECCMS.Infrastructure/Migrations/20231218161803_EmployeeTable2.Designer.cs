@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECCMS.Infrastructure.Migrations
 {
     [DbContext(typeof(EccmsDbContext))]
-    [Migration("20231216170603_Initial")]
-    partial class Initial
+    [Migration("20231218161803_EmployeeTable2")]
+    partial class EmployeeTable2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,7 +54,7 @@ namespace ECCMS.Infrastructure.Migrations
                     b.Property<string>("EmailAddress")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("InstitutionId")
+                    b.Property<int>("InstitutionId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
@@ -139,7 +139,7 @@ namespace ECCMS.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("BranchId")
+                    b.Property<int?>("BranchId")
                         .HasColumnType("int");
 
                     b.Property<bool?>("ChangePassword")
@@ -580,7 +580,9 @@ namespace ECCMS.Infrastructure.Migrations
 
                     b.HasOne("ECCMS.Core.Entities.Institution", "Institution")
                         .WithMany()
-                        .HasForeignKey("InstitutionId");
+                        .HasForeignKey("InstitutionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("City");
 
@@ -602,9 +604,7 @@ namespace ECCMS.Infrastructure.Migrations
                 {
                     b.HasOne("ECCMS.Core.Entities.Branch", "Branch")
                         .WithMany()
-                        .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BranchId");
 
                     b.HasOne("ECCMS.Core.Entities.Role", "Role")
                         .WithMany()

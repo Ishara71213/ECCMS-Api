@@ -13,6 +13,8 @@ public class Branch : BaseEntity
 
     public int CityId { get; set; }
 
+    public int InstitutionId { get; set; }
+
     public virtual City? City { get; set; }
 
     public virtual Institution? Institution { get; set; }

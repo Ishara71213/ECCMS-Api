@@ -3,6 +3,8 @@ using ECCMS.Core.Interfaces.IServices;
 using ECCMS.Core.Entities;
 using Microsoft.AspNetCore.Mvc;
 using ECCMS.Api.Dtos;
+using ECCMS.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ECCMS.Api.Controllers
 {
@@ -21,6 +23,18 @@ namespace ECCMS.Api.Controllers
         {
             var items = await _cityService.GetAllAsync();
             return Ok(_mapper.Map<IReadOnlyList<CityDto>>(items));
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> Add(CityDto model)
+        {
+            var access = HttpContext.Items["Access"] as AccessDto;
+            var item = _mapper.Map<City>(model);
+            item.CreatedBy = access!.UserId;
+            await _cityService.AddAsync(item);
+
+            return Created("GetAll", _mapper.Map<CityDto>(item));
         }
     }
 }
