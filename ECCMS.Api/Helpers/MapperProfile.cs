@@ -60,8 +60,13 @@ namespace ECCMS.Api.Helpers
             .ForMember(dest => dest.Dob, opt => opt.MapFrom(src => src.Dob));
 
             CreateMap<BranchDto, Branch>();
-
             CreateMap<Branch, BranchDto>();
+
+            CreateMap<CrimeTypeDto, CrimeType>().ReverseMap();
+            CreateMap<CrimeTypePostDto, CrimeType>().ReverseMap();
+
+            CreateMap<InquiryPostDto, Inquiry>().ReverseMap();
+            CreateMap<InquiryDto, Inquiry>().ReverseMap();
         }
 
        

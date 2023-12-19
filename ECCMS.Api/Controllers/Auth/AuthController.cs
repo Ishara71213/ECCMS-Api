@@ -68,7 +68,7 @@ namespace ECCMS.Api.Controllers.Auth
                     new Claim(type: "UserId", value: user!.Id.ToString()),
                     new Claim(type: "EmployeeId", value: user!.Id.ToString()),
                     new Claim(type: "InstutionId", value: role.InstitutionId.ToString()),
-                    new Claim(type: "BranchId", value: employee!.BranchId.ToString()),
+                    new Claim(type: "BranchId", value: employee!.BranchId!.ToString()!),
                     new Claim(type: "RoleId", value: employee!.RoleId.ToString()),
                     new Claim(type: ClaimTypes.GivenName, value: user.FirstName),
                     new Claim(type: ClaimTypes.Surname, value: user.LastName),
