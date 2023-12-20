@@ -32,12 +32,12 @@ namespace ECCMS.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var item = await _employeeService.GetAllAsync();
+            var item = await _employeeService.GetAllWithUserDataAsync();
             if (item == null)
             {
                 return BadRequest("Some error occured");
             }
-            return Ok(_mapper.Map<EmployeeDto>(item));
+            return Ok(_mapper.Map<IReadOnlyList<EmployeeDto>>(item));
         }
 
         [HttpGet("{id:int}")]
@@ -46,7 +46,20 @@ namespace ECCMS.Api.Controllers
             var item = await _employeeService.GetByIdAsync(id);
             if (item == null)
             {
-                return BadRequest("Member Not Found");
+                return BadRequest("Employee Not Found");
+            }
+            var user = await _userService.GetByIdAsync(item.UserId);
+            item.User = user;
+            return Ok(_mapper.Map<EmployeeDto>(item));
+        }
+
+        [HttpGet("GetByUserId/{id:int}")]
+        public async Task<IActionResult> GetByUserId(int id)
+        {
+            var item = await _employeeService.GetByUserIdAsync(id);
+            if (item == null)
+            {
+                return BadRequest("User Not Found");
             }
             return Ok(_mapper.Map<EmployeeDto>(item));
         }

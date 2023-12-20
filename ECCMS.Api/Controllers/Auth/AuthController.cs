@@ -87,9 +87,13 @@ namespace ECCMS.Api.Controllers.Auth
                 var response = new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
-                    role = role,
+                    role = _mapper.Map<RoleDto>(role),
                     firstName = user.FirstName,  // Include first name in the response
                     lastName = user.LastName,    // Include last name in the response
+                    userType = user.Type,
+                    userId = user.Id,
+                    employeeId = employee.Id  // Include EmployeeId in the response 
+
                 };
                 return Ok(response);
             }
@@ -126,9 +130,11 @@ namespace ECCMS.Api.Controllers.Auth
                 var response = new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
-                    role = role,
+                    role = _mapper.Map<RoleDto>(role),
                     firstName = user.FirstName,  // Include first name in the response
                     lastName = user.LastName,    // Include last name in the response
+                    userType = user.Type,
+                    userId = user.Id,
                 };
                 return Ok(response);
             }

@@ -19,10 +19,18 @@ namespace ECCMS.Infrastructure.Repositories
             _context=context;
         }
 
-
+        public async Task<IReadOnlyList<Employee>> GetAllWithUserDataAsync()
+        {
+            return await _context.Employees.Where(x => !x.IsDeleted)
+                .Include(r => r.User)
+                .OrderByDescending(x => x.Id).ToListAsync();
+        }
+    
         public async Task<Employee?> GetByUserIdAsync(int userId)
         {
-            return await _context.Employees.FirstOrDefaultAsync(x => x.UserId == userId);
+            return await _context.Employees
+                .Include(r => r.User)
+                .FirstOrDefaultAsync(x => x.UserId == userId);
         }
     }
 }

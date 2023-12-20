@@ -23,6 +23,11 @@ namespace ECCMS.Application.Services
             return await _employeeRepository.GetAllAsync();
         }
 
+        public async Task<IReadOnlyList<Employee>> GetAllWithUserDataAsync()
+        {
+            return await _employeeRepository.GetAllWithUserDataAsync();
+        }
+
         public async Task<Employee?> GetByIdAsync(int id)
         {
             return await _employeeRepository.GetByIdAsync(id);
