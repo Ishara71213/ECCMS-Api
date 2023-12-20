@@ -67,7 +67,9 @@ namespace ECCMS.Api.Helpers
             CreateMap<CrimeTypePostDto, CrimeType>().ReverseMap();
 
             CreateMap<InquiryPostDto, Inquiry>().ReverseMap();
-            CreateMap<InquiryDto, Inquiry>().ReverseMap();
+            CreateMap<Inquiry, InquiryDto>()
+            .ForMember(dest => dest.CrimeTypeName, opt => opt.MapFrom(src => src.CrimeType!.Name));
+            CreateMap<InquiryDto, Inquiry>();
 
             CreateMap<ProvinceDto, Province>().ReverseMap();
         }

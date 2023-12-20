@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using ECCMS.Api.Dtos;
 using ECCMS.Core.Entities;
+using ECCMS.Core.Enums;
 using ECCMS.Core.Interfaces.IServices;
 using Microsoft.AspNetCore.Mvc;
+using System.Transactions;
 
 namespace ECCMS.Api.Controllers
 {
@@ -11,10 +13,20 @@ namespace ECCMS.Api.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IInquiryService _inquiryService;
-        public InquiryController(IInquiryService inquiryService, IMapper mapper)
+        private readonly ICrimeTypeService _crimeTypeService;
+        public InquiryController(IInquiryService inquiryService, ICrimeTypeService crimeTypeService, IMapper mapper)
         {
             _inquiryService = inquiryService;
+            _crimeTypeService = crimeTypeService;
             _mapper = mapper;
+        }
+
+        [HttpGet("{id:int}")]
+        public async Task<InquiryDto> GetByIdAsync(int id)
+        {
+            var inquiry = await _inquiryService.GetByIdAsync(id);
+            var inquiryDto = _mapper.Map<InquiryDto>(inquiry);
+            return inquiryDto;
         }
 
         [HttpGet]
@@ -28,26 +40,26 @@ namespace ECCMS.Api.Controllers
         [HttpGet("GetAllByInstitution/{id:int}")]
         public async Task<IReadOnlyList<InquiryDto>> GetAllByInstitutionId(int id)
         {
-            var inquiries = await _inquiryService.GetAllAsync();
+            var inquiries = await _inquiryService.GetAllWithCrimeTypeAsync();
             var filteredList = inquiries.Where(item => item!.InstitutionId == id).ToList();
             var inquiryDtos = _mapper.Map<List<InquiryDto>>(filteredList);
             return inquiryDtos;
         }
 
         [HttpGet("GetAllByUser/{id:int}")]
-        public async Task<IReadOnlyList<InquiryDto>> GetAllByUserId(int userId)
+        public async Task<IReadOnlyList<InquiryDto>> GetAllByUserId(int id)
         {
-            var inquiries = await _inquiryService.GetAllAsync();
-            var filteredList = inquiries.Where(item => item.UserId == userId).ToList();
+            var inquiries = await _inquiryService.GetAllWithCrimeTypeAsync();
+            var filteredList = inquiries.Where(item => item.UserId == id).ToList();
             var inquiryDtos = _mapper.Map<List<InquiryDto>>(filteredList);
             return inquiryDtos;
         }
 
         [HttpGet("GetAllByEmployee/{id:int}")]
-        public async Task<IReadOnlyList<InquiryDto>> GetAllByEmployeeId(int empId)
+        public async Task<IReadOnlyList<InquiryDto>> GetAllByEmployeeId(int id)
         {
-            var inquiries = await _inquiryService.GetAllAsync();
-            var filteredList = inquiries.Where(item => item.EmployeeId == empId).ToList();
+            var inquiries = await _inquiryService.GetAllWithCrimeTypeAsync();
+            var filteredList = inquiries.Where(item => item.EmployeeId == id).ToList();
             var inquiryDtos = _mapper.Map<List<InquiryDto>>(filteredList);
             return inquiryDtos;
         }
@@ -55,8 +67,8 @@ namespace ECCMS.Api.Controllers
         [HttpGet("GetAllByBranch/{id:int}")]
         public async Task<IReadOnlyList<InquiryDto>> GetAllByBranchId(int Id)
         {
-            var inquiries = await _inquiryService.GetAllAsync();
-            var filteredList = inquiries.Where(item => item.UserId == Id).ToList();
+            var inquiries = await _inquiryService.GetAllWithCrimeTypeAsync();
+            var filteredList = inquiries.Where(item => item.BranchId == Id).ToList();
             var inquiryDtos = _mapper.Map<List<InquiryDto>>(filteredList);
             return inquiryDtos;
         }
@@ -67,9 +79,21 @@ namespace ECCMS.Api.Controllers
             var access = HttpContext.Items["Access"] as AccessDto;
             var item = _mapper.Map<Inquiry>(model);
             item.CreatedBy = access!.UserId;
-            await _inquiryService.AddAsync(item);
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
+            {
+                item.TicketId = await _inquiryService.GenerateTicketId();
+                await _inquiryService.AddAsync(item);
 
-            return CreatedAtAction("GetAll", new { id = item.Id }, _mapper.Map<InquiryDto>(item));
+                scope.Complete();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Add Inquiry: " + ex.Message);
+            }
+            
+
+            return CreatedAtAction("GetAll", _mapper.Map<InquiryDto>(item));
         }
 
         [HttpPut("{id:int}")]
@@ -88,6 +112,7 @@ namespace ECCMS.Api.Controllers
 
             return Ok();
         }
+
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)

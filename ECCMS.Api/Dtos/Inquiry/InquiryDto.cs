@@ -17,6 +17,8 @@ namespace ECCMS.Api.Dtos
 
         public int CrimeTypeId { get; set; }
 
+        public string? CrimeTypeName { get; set; }
+
         public string TicketId { get; set; } = string.Empty;
 
         public InquiryStatus Status { get; set; } = InquiryStatus.Reviewing;
@@ -41,7 +43,6 @@ namespace ECCMS.Api.Dtos
 
         public int? Rating { get; set; }
 
-        public virtual CrimeType? CrimeType { get; set; }
 
     }
 }

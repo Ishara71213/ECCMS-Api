@@ -9,6 +9,8 @@ namespace ECCMS.Api.Dtos
 
         public int InstitutionId { get; set; }
 
+        public int BranchId { get; set; }
+
         public int CrimeTypeId { get; set; }
 
         public InquiryStatus Status { get; set; } = InquiryStatus.Reviewing;
