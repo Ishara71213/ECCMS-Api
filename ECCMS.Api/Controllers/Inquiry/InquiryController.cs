@@ -22,11 +22,17 @@ namespace ECCMS.Api.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<InquiryDto> GetByIdAsync(int id)
+        public async Task<IActionResult> GetByIdAsync(int id)
         {
             var inquiry = await _inquiryService.GetByIdAsync(id);
+            if (inquiry == null)
+            {
+                return BadRequest("No Inquiry for this Id");
+            }
             var inquiryDto = _mapper.Map<InquiryDto>(inquiry);
-            return inquiryDto;
+            var crimeType = await _crimeTypeService.GetByIdAsync(inquiry!.CrimeTypeId);
+            inquiryDto.CrimeTypeName = crimeType!.Name;
+            return Ok(inquiryDto);
         }
 
         [HttpGet]

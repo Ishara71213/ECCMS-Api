@@ -36,7 +36,7 @@ namespace ECCMS.Api.Controllers
         }
 
         [HttpPut("StatusChange")]
-        public async Task<IActionResult> StatusChange(InquiryAssignOfficerDto model)
+        public async Task<IActionResult> StatusChange(InquiryStatusChangeDto model)
         {
             var item = await _inquiryService.GetByIdAsync(model.Id);
             if (item == null)
@@ -47,14 +47,14 @@ namespace ECCMS.Api.Controllers
             var access = HttpContext.Items["Access"] as AccessDto;
             item.ModifiedBy = access!.UserId;
             item.ModifiedOn = DateTime.UtcNow;
-            item.EmployeeId = model.EmployeeId;
+            item.Status = model.Status;
             await _inquiryService.UpdateAsync(item);
 
             return Ok();
         }
 
-        [HttpPut("InquiryResponse")]
-        public async Task<IActionResult> InquiryResponse(InquiryResponseDto model)
+        [HttpPut("Reply")]
+        public async Task<IActionResult> Reply(InquiryResponseDto model)
         {
             var item = await _inquiryService.GetByIdAsync(model.Id);
             if (item == null)
