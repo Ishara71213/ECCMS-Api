@@ -88,6 +88,7 @@ namespace ECCMS.Api.Controllers
             using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
+                item.EmployeeId = 3;
                 item.TicketId = await _inquiryService.GenerateTicketId();
                 await _inquiryService.AddAsync(item);
 
