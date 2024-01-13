@@ -126,19 +126,34 @@ namespace ECCMS.Api
 
                         var jwtToken = (JwtSecurityToken)validatedToken;
                         var userId = jwtToken.Claims.First(x => x.Type == "UserId").Value;
-                        var employeeId = jwtToken.Claims.First(x => x.Type == "EmployeeId").Value;
                         var roleId = jwtToken.Claims.First(x => x.Type == "RoleId").Value;
-                        var instutionId = jwtToken.Claims.First(x => x.Type == "InstutionId").Value;
-                        var branchId = jwtToken.Claims.First(x => x.Type == "BranchId").Value;
-
-                        AccessDto access = new()
+                        
+                        
+                        AccessDto access;
+                        if (roleId=="2")
                         {
-                            UserId = int.Parse(userId),
-                            EmployeeId = int.Parse(employeeId),
-                            RoleId = int.Parse(roleId),
-                            InstutionId = int.Parse(instutionId),
-                            BranchId = int.Parse(branchId)
-                        };
+                            access = new()
+                            {
+                                UserId = int.Parse(userId),
+                                RoleId = int.Parse(roleId),
+                               
+                            };
+                        }
+                        else
+                        {
+                            var employeeId = jwtToken.Claims.First(x => x.Type == "EmployeeId").Value;
+                            var branchId = jwtToken.Claims.First(x => x.Type == "BranchId").Value;
+                            var instutionId = jwtToken.Claims.First(x => x.Type == "InstutionId").Value;
+                            access = new()
+                            {
+                                UserId = int.Parse(userId),
+                                EmployeeId = int.Parse(employeeId),
+                                RoleId = int.Parse(roleId),
+                                InstutionId = int.Parse(instutionId),
+                                BranchId = int.Parse(branchId)
+                            };
+                        }
+                        
                         context.Items["Access"] = access;
                     }
                     catch (Exception)
